@@ -1,0 +1,67 @@
+### Executive Summary
+
+Phase 1 of the FIFA World Cup 2026 Tracker focuses on macro-state tournament logic: rendering the expanded 12-group stage, calculating complex qualification permutations (including the eight best third-place teams), and dynamically populating a 32-team knockout bracket. The system prioritizes accurate state management and predictive UI over live, micro-event data tracking.
+
+### Platform Decision: Progressive Web App (PWA)
+
+This must be built as a responsive Web Application.
+
+* **Data Visualization:** Complex components like 32-team interactive brackets and multi-table views are significantly easier to render, scale, and interact with using DOM/CSS grids or SVG libraries than native mobile UI frameworks.
+* **State Management:** The dense client-side logic required for the predictive bracket hover states is best handled by established web frontend frameworks.
+* **Accessibility:** A PWA provides mobile-app-like installation (add to homescreen) without the overhead of App Store deployment and review cycles.
+
+### Technical Architecture & Stack
+
+* **Frontend: Angular (TypeScript)**
+* Strict typing is critical for managing the complex nested objects of the 2026 format (Groups -> Teams -> Matches -> Points/GD).
+* Utilize Signals or NgRx for reactive state management. When a group stage match result is injected, the standings, the third-place ranking table, and the knockout bracket must update synchronously without prop drilling.
+
+
+* **Backend: Python (FastAPI)**
+* The core backend challenge is the permutation engine. Python, utilizing libraries like Pandas, is optimized for calculating the cross-group mathematical sorting (Points, GD, Goals Scored, Fair Play) required to identify the top eight third-place teams.
+* FastAPI provides asynchronous, high-performance endpoints to serve the calculated states to the frontend.
+
+
+* **Database: PostgreSQL**
+* Relational structure is mandatory. You need rigid constraints between `Tournaments`, `Teams`, `Matches`, and `BracketSlots`.
+
+
+* **Caching: Redis (Optional for Phase 1)**
+* Useful if traffic scales, to serve the pre-calculated group standings and bracket state instead of recalculating per user request.
+
+
+
+### Free Data Sourcing Strategy
+
+True "live" sub-minute sports APIs are expensive. However, because Phase 1 focuses on macro-states (match results and standings), high-frequency polling is unnecessary. You can utilize free tiers by batching requests.
+
+1. **API-Football (via RapidAPI):** * The free tier allows 100 requests per day.
+* *Implementation:* Write a cron job in your backend to poll the API only when a match is scheduled to end, retrieving the final score to update your database.
+
+
+2. **football-data.org:** * Offers a free tier that historically covers major international tournaments like the World Cup. It provides fixtures, results, and standings with generous rate limits for non-commercial use.
+3. **Fallback - Python Web Scraper:** * If APIs fail or delay 2026 format support, the macro-state (scores and tables) is reliably formatted on Wikipedia or RSS feeds. A scheduled BeautifulSoup script can parse the DOM of tournament tables and update your PostgreSQL database.
+
+### Functional Requirements (Phase 1)
+
+**1. Data Ingestion & Storage**
+
+* System fetches initial tournament metadata (48 teams, 12 groups, fixture list) via API or manual JSON seed.
+* System stores match states: `Scheduled`, `In_Progress` (optional manual toggle), `Finished`.
+
+**2. Group Stage Engine**
+
+* System renders 12 groups (A-L) displaying Played, Won, Drawn, Lost, Goals For (GF), Goals Against (GA), Goal Difference (GD), and Points.
+* System calculates dynamic standings based on FIFA tie-breaker rules.
+* System isolates and ranks the 12 third-place teams in a separate cross-group table to identify the top 8 advancing teams.
+
+**3. Knockout Bracket State Manager**
+
+* System renders a 32-team bracket UI.
+* System automatically populates known slots (e.g., "Winner Group A" vs. "Runner-up Group B") as soon as mathematical qualification is secured, even if the group is not finished.
+* System maps the complex 3rd-place qualification matrix (the specific bracket placement of a 3rd-place team depends on *which* groups the 8 advancing teams come from) to the correct bracket slots.
+
+**4. Predictive UI (Hover States)**
+
+* When a user hovers over an empty knockout slot (e.g., "Runner-up Group F"), the frontend highlights the corresponding group table.
+* When a user hovers over a team in a group table, the frontend highlights their potential future paths in the knockout bracket based on current mathematical probability (1st, 2nd, or 3rd place finishes).

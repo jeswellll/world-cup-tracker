@@ -1,0 +1,128 @@
+.dashboard-container {
+  padding: 0 24px 24px 24px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.main-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  position: sticky;
+  top: 16px;
+  z-index: 1000;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.fwc-logo {
+  height: 56px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.title-container h1 {
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+  letter-spacing: 1px;
+}
+
+.title-container .subtitle {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: 0;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.header-accents {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+}
+.accent { flex: 1; opacity: 0.8; }
+.accent.cyan { background: var(--fwc-neon-cyan); }
+.accent.magenta { background: var(--fwc-neon-magenta); }
+.accent.green { background: var(--fwc-neon-green); }
+
+.tabs-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-left: auto;
+  margin-right: 110px;
+  width: auto;
+  padding: 0;
+}
+
+.tabs-nav button {
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 6px 16px;
+  cursor: pointer;
+  border-radius: 24px;
+  transition: all 0.3s ease;
+  font-family: var(--font-primary);
+}
+
+.tabs-nav button:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+}
+
+.tabs-nav button.active {
+  color: #0A0A0A;
+  background: var(--fwc-neon-cyan);
+  font-weight: 700;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+}
+
+.tab-pane {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.main-content {
+  display: block;
+  width: 100%;
+}
+
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.groups-section h2 {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 32px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px var(--fwc-neon-cyan);
+}

@@ -1,0 +1,35 @@
+<div class="calendar-container">
+  <div class="day-group" *ngFor="let day of scheduleByDay()">
+    <div class="day-header">
+      <h3>{{ day.date }}</h3>
+    </div>
+    <div class="day-matches">
+      <div class="match-card" *ngFor="let match of day.matches" [ngClass]="match.type">
+        <div class="match-time">
+          {{ match.date | date:'HH:mm' }}
+          <div class="match-venue" *ngIf="match.venue">{{ match.venue }}</div>
+        </div>
+        <div class="match-group">
+          <span class="badge" [class.badge-knockout]="match.type === 'knockout'">
+            <ng-container *ngIf="match.type === 'group'">Group {{ match.group_name }}</ng-container>
+            <ng-container *ngIf="match.type === 'knockout'">{{ match.group_name }}</ng-container>
+          </span>
+        </div>
+        <div class="match-teams">
+          <div class="home-team" [class.tbd]="match.home_team_name.includes('Group')">
+            {{ match.home_team_name }}
+            <span *ngIf="match.home_team_code" class="fi" [ngClass]="'fi-' + match.home_team_code.toLowerCase()" style="margin-left: 8px;"></span>
+          </div>
+          <div class="score-box">
+            <span *ngIf="match.status === 'Finished'">{{ match.home_score }} - {{ match.away_score }}</span>
+            <span *ngIf="match.status !== 'Finished'">vs</span>
+          </div>
+          <div class="away-team" [class.tbd]="match.away_team_name.includes('Group')">
+            <span *ngIf="match.away_team_code" class="fi" [ngClass]="'fi-' + match.away_team_code.toLowerCase()" style="margin-right: 8px;"></span>
+            {{ match.away_team_name }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,189 @@
+<div class="bracket-header">
+  <h2 class="neon-text">Knockout Stage</h2>
+  <p>Bracket Flow</p>
+</div>
+
+<div class="bracket-wrapper">
+
+  <div class="bracket-tree two-winged">
+
+    <!-- LEFT WING -->
+    <div class="wing left-wing">
+      <div class="round-column" *ngFor="let round of leftWingRounds; let rIdx = index">
+        <h3 class="round-name">{{ round.name }}</h3>
+
+        <div class="matches-container">
+          <div class="match-wrapper left-wrap" *ngFor="let match of round.matches; let i = index">
+
+            <div class="match-card">
+              <div class="match-header">
+                <span class="match-name">{{ match.name }}</span>
+                <span class="match-date">{{ match.date | date:'MMM d, HH:mm' }}</span>
+              </div>
+              <div class="team-row">
+                <div class="team-name" [class.tbd]="match.teamA?.includes('Group')">
+                  <span *ngIf="match.teamACode" class="fi" [ngClass]="'fi-' + match.teamACode.toLowerCase()"></span>
+                  {{ match.teamA || 'TBD' }}
+                  <div class="tooltip" *ngIf="match.sourceGroupA">
+                    <strong>{{ match.sourceGroupA.length === 1 ? 'Group ' + match.sourceGroupA + ' Standings' :
+                      'Potential 3rd Place Teams' }}</strong>
+                    <ol *ngIf="match.sourceGroupA.length === 1">
+                      <li *ngFor="let t of getTooltipTeams(match.sourceGroupA)">{{ t.team }}</li>
+                    </ol>
+                    <ul *ngIf="match.sourceGroupA.length > 1" class="combo-list">
+                      <li *ngFor="let t of getTooltipTeams(match.sourceGroupA)">
+                        <span class="grp-badge">{{ t.group }}</span> {{ t.team }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <span class="score">-</span>
+              </div>
+              <div class="team-row">
+                <div class="team-name" [class.tbd]="match.teamB?.includes('Group')">
+                  <span *ngIf="match.teamBCode" class="fi" [ngClass]="'fi-' + match.teamBCode.toLowerCase()"></span>
+                  {{ match.teamB || 'TBD' }}
+                  <div class="tooltip" *ngIf="match.sourceGroupB">
+                    <strong>{{ match.sourceGroupB.length === 1 ? 'Group ' + match.sourceGroupB + ' Standings' :
+                      'Potential 3rd Place Teams' }}</strong>
+                    <ol *ngIf="match.sourceGroupB.length === 1">
+                      <li *ngFor="let t of getTooltipTeams(match.sourceGroupB)">{{ t.team }}</li>
+                    </ol>
+                    <ul *ngIf="match.sourceGroupB.length > 1" class="combo-list">
+                      <li *ngFor="let t of getTooltipTeams(match.sourceGroupB)">
+                        <span class="grp-badge">{{ t.group }}</span> {{ t.team }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <span class="score">-</span>
+              </div>
+            </div>
+
+            <!-- Mathematical Vertical Connector -->
+            <div class="vertical-connector right-connect" *ngIf="i % 2 === 0 && round.name !== 'Semifinals'"></div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER COLUMN -->
+    <div class="center-column">
+      <div class="round-column final-column">
+        <h3 class="round-name">Final</h3>
+        <div class="matches-container">
+          <div class="match-wrapper center-wrap" *ngIf="centerFinal">
+            <div class="match-card">
+              <div class="match-header">
+                <span class="match-name">{{ centerFinal.name }}</span>
+                <span class="match-date">{{ centerFinal.date | date:'MMM d, HH:mm' }}</span>
+              </div>
+              <div class="team-row">
+                <div class="team-name tbd">
+                  <span *ngIf="centerFinal.teamACode" class="fi"
+                    [ngClass]="'fi-' + centerFinal.teamACode.toLowerCase()"></span>
+                  {{ centerFinal.teamA }}
+                </div>
+                <span class="score">-</span>
+              </div>
+              <div class="team-row">
+                <div class="team-name tbd">
+                  <span *ngIf="centerFinal.teamBCode" class="fi"
+                    [ngClass]="'fi-' + centerFinal.teamBCode.toLowerCase()"></span>
+                  {{ centerFinal.teamB }}
+                </div>
+                <span class="score">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT WING -->
+    <div class="wing right-wing">
+      <div class="round-column" *ngFor="let round of rightWingRounds; let rIdx = index">
+        <h3 class="round-name">{{ round.name }}</h3>
+
+        <div class="matches-container">
+          <div class="match-wrapper right-wrap" *ngFor="let match of round.matches; let i = index">
+
+            <div class="match-card">
+              <div class="match-header">
+                <span class="match-name">{{ match.name }}</span>
+                <span class="match-date">{{ match.date | date:'MMM d, HH:mm' }}</span>
+              </div>
+              <div class="team-row">
+                <div class="team-name" [class.tbd]="match.teamA?.includes('Group')">
+                  {{ match.teamA || 'TBD' }}
+                  <div class="tooltip" *ngIf="match.sourceGroupA">
+                    <strong>{{ match.sourceGroupA.length === 1 ? 'Group ' + match.sourceGroupA + ' Standings' :
+                      'Potential 3rd Place Teams' }}</strong>
+                    <ol *ngIf="match.sourceGroupA.length === 1">
+                      <li *ngFor="let t of getTooltipTeams(match.sourceGroupA)">{{ t.team }}</li>
+                    </ol>
+                    <ul *ngIf="match.sourceGroupA.length > 1" class="combo-list">
+                      <li *ngFor="let t of getTooltipTeams(match.sourceGroupA)">
+                        <span class="grp-badge">{{ t.group }}</span> {{ t.team }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <span class="score">-</span>
+              </div>
+              <div class="team-row">
+                <div class="team-name" [class.tbd]="match.teamB?.includes('Group')">
+                  {{ match.teamB || 'TBD' }}
+                  <div class="tooltip" *ngIf="match.sourceGroupB">
+                    <strong>{{ match.sourceGroupB.length === 1 ? 'Group ' + match.sourceGroupB + ' Standings' :
+                      'Potential 3rd Place Teams' }}</strong>
+                    <ol *ngIf="match.sourceGroupB.length === 1">
+                      <li *ngFor="let t of getTooltipTeams(match.sourceGroupB)">{{ t.team }}</li>
+                    </ol>
+                    <ul *ngIf="match.sourceGroupB.length > 1" class="combo-list">
+                      <li *ngFor="let t of getTooltipTeams(match.sourceGroupB)">
+                        <span class="grp-badge">{{ t.group }}</span> {{ t.team }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <span class="score">-</span>
+              </div>
+            </div>
+
+            <!-- Mathematical Vertical Connector (reversed) -->
+            <div class="vertical-connector left-connect" *ngIf="i % 2 === 0 && round.name !== 'Semifinals'"></div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bronze-match-container" *ngIf="bronzeMatch">
+    <h3 class="round-name">Bronze Final</h3>
+    <div class="match-card bronze-card">
+      <div class="match-header">
+        <span class="match-name">{{ bronzeMatch.name }}</span>
+        <span class="match-date">{{ bronzeMatch.date | date:'MMM d, HH:mm' }}</span>
+      </div>
+      <div class="team-row">
+        <div class="team-name tbd">
+          <span *ngIf="bronzeMatch.teamACode" class="fi" [ngClass]="'fi-' + bronzeMatch.teamACode.toLowerCase()"></span>
+          {{ bronzeMatch.teamA }}
+        </div>
+        <span class="score">-</span>
+      </div>
+      <div class="team-row">
+        <div class="team-name tbd">
+          <span *ngIf="bronzeMatch.teamBCode" class="fi" [ngClass]="'fi-' + bronzeMatch.teamBCode.toLowerCase()"></span>
+          {{ bronzeMatch.teamB }}
+        </div>
+        <span class="score">-</span>
+      </div>
+    </div>
+  </div>
+</div>

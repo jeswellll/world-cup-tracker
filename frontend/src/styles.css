@@ -1,0 +1,54 @@
+:root {
+  --fwc-black: #0A0A0A;
+  --fwc-dark-surface: rgba(20, 20, 25, 0.75);
+  --fwc-glass-border: rgba(255, 255, 255, 0.15);
+  --fwc-neon-cyan: #00f2fe;
+  --fwc-neon-magenta: #ff007f;
+  --fwc-neon-green: #ccff00;
+
+  --font-primary: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-primary);
+  background-color: var(--fwc-black);
+  /* The dark overlay gradient helps keep text legible over the bright stadium background */
+  background-image: linear-gradient(to bottom, rgba(10, 10, 10, 0.5), rgba(10, 10, 10, 0.8)), url('/images/fifa wallpaper.png');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+/* Base Glassmorphism utilities */
+.glass-panel {
+  background: var(--fwc-dark-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--fwc-glass-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Custom Scrollbar for sleekness */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fwc-neon-cyan);
+}

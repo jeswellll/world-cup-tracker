@@ -1,0 +1,17 @@
+<div class="matches-list">
+  <h4>Matches</h4>
+  <div class="match-item" *ngFor="let match of groupMatches()">
+    <div class="match-meta">
+      <span class="match-date">{{ match.date | date:'MMM d, HH:mm' }}</span>
+      <span class="match-venue" *ngIf="match.venue">• {{ match.venue }}</span>
+    </div>
+    <div class="match-teams">
+      <span class="home-team">{{ match.home_team_name }}</span>
+      <span class="score-box">
+        <span *ngIf="match.status === 'Finished'">{{ match.home_score }} - {{ match.away_score }}</span>
+        <span *ngIf="match.status !== 'Finished'">vs</span>
+      </span>
+      <span class="away-team">{{ match.away_team_name }}</span>
+    </div>
+  </div>
+</div>

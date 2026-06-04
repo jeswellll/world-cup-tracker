@@ -1,0 +1,74 @@
+.matches-list {
+  margin-top: 1rem;
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+h4 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.match-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.match-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.match-meta {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.match-venue {
+  opacity: 0.8;
+}
+
+.match-teams {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-team, .away-team {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #f8fafc;
+}
+
+.home-team {
+  text-align: right;
+}
+
+.away-team {
+  text-align: left;
+}
+
+.score-box {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 0 10px;
+  min-width: 40px;
+  text-align: center;
+}

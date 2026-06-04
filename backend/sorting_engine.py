@@ -1,0 +1,176 @@
+import pandas as pd
+from typing import List, Dict, Any
+
+def calculate_standings(matches: List[Dict[str, Any]], teams: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Calculate standings from a list of match dictionaries and team dictionaries.
+    matches = [{'home_team_id': 1, 'away_team_id': 2, 'home_score': 2, 'away_score': 1, 'status': 'Finished', 'group_name': 'A'}, ...]
+    teams = [{'id': 1, 'name': 'USA', 'code': 'USA', 'group_name': 'A'}, ...]
+    """
+    if not teams:
+        return []
+
+    df_teams = pd.DataFrame(teams)
+    
+    # Initialize stats
+    stats = []
+    for _, team in df_teams.iterrows():
+        stats.append({
+            'team_id': team['id'],
+            'team_name': team['name'],
+            'team_code': team['code'],
+            'group_name': team.get('group_name', ''),
+            'played': 0, 'won': 0, 'drawn': 0, 'lost': 0,
+            'goals_for': 0, 'goals_against': 0, 'goal_difference': 0, 'points': 0
+        })
+    
+    df_stats = pd.DataFrame(stats).set_index('team_id')
+
+    # Process matches
+    df_matches = pd.DataFrame(matches)
+    if not df_matches.empty:
+        finished_matches = df_matches[df_matches['status'] == 'Finished']
+        for _, match in finished_matches.iterrows():
+            h_id = match['home_team_id']
+            a_id = match['away_team_id']
+            h_score = match['home_score']
+            a_score = match['away_score']
+
+            if pd.isna(h_score) or pd.isna(a_score):
+                continue
+                
+            # Update played
+            df_stats.loc[h_id, 'played'] += 1
+            df_stats.loc[a_id, 'played'] += 1
+            
+            # Update goals
+            df_stats.loc[h_id, 'goals_for'] += h_score
+            df_stats.loc[h_id, 'goals_against'] += a_score
+            df_stats.loc[a_id, 'goals_for'] += a_score
+            df_stats.loc[a_id, 'goals_against'] += h_score
+            
+            # Update results and points
+            if h_score > a_score:
+                df_stats.loc[h_id, 'won'] += 1
+                df_stats.loc[h_id, 'points'] += 3
+                df_stats.loc[a_id, 'lost'] += 1
+            elif a_score > h_score:
+                df_stats.loc[a_id, 'won'] += 1
+                df_stats.loc[a_id, 'points'] += 3
+                df_stats.loc[h_id, 'lost'] += 1
+            else:
+                df_stats.loc[h_id, 'drawn'] += 1
+                df_stats.loc[a_id, 'drawn'] += 1
+                df_stats.loc[h_id, 'points'] += 1
+                df_stats.loc[a_id, 'points'] += 1
+
+    # Calculate goal difference
+    df_stats['goal_difference'] = df_stats['goals_for'] - df_stats['goals_against']
+
+    df_stats = df_stats.reset_index()
+
+    # Sort by Points -> GD -> GF
+    df_stats = df_stats.sort_values(
+        by=['points', 'goal_difference', 'goals_for'], 
+        ascending=[False, False, False]
+    )
+    
+    standings = df_stats.to_dict('records')
+
+    # Mathematical Qualification Engine
+    # Group the standings and matches by group
+    from itertools import product
+
+    # Set default
+    for row in standings:
+        row['locked_rank'] = None
+
+    grouped = {}
+    for row in standings:
+        g = row['group_name']
+        if g not in grouped:
+            grouped[g] = []
+        grouped[g].append(row)
+
+    for g, g_teams in grouped.items():
+        # Get scheduled matches for this group
+        g_scheduled = [m for m in matches if m.get('group_name') == g and m.get('status') != 'Finished']
+        
+        # If no scheduled matches, ranks are perfectly locked by definition
+        if not g_scheduled:
+            for i, team in enumerate(g_teams):
+                team['locked_rank'] = i + 1
+            continue
+
+        # Extract base points
+        base_points = {t['team_id']: t['points'] for t in g_teams}
+        team_ids = list(base_points.keys())
+
+        absolute_best = {tid: 4 for tid in team_ids}
+        absolute_worst = {tid: 1 for tid in team_ids}
+
+        # Simulate all 3^N scenarios
+        # Outcome tuples: (home_pts, away_pts)
+        outcomes = [(3, 0), (1, 1), (0, 3)]
+        
+        # Generator for all combinations of outcomes
+        # e.g. product(outcomes, repeat=2) gives all 9 combinations for 2 matches
+        # Limit to 6 matches max (729 scenarios) to prevent infinite loops if data is bad
+        if len(g_scheduled) <= 6:
+            for combo in product(outcomes, repeat=len(g_scheduled)):
+                scenario_points = base_points.copy()
+                for match, outcome in zip(g_scheduled, combo):
+                    h_id = match['home_team_id']
+                    a_id = match['away_team_id']
+                    if h_id in scenario_points: scenario_points[h_id] += outcome[0]
+                    if a_id in scenario_points: scenario_points[a_id] += outcome[1]
+
+                # Find best and worst rank for each team in this scenario based strictly on points
+                for tid in team_ids:
+                    pts = scenario_points[tid]
+                    # Best rank: 1 + number of teams with strictly more points
+                    better_count = sum(1 for other_pts in scenario_points.values() if other_pts > pts)
+                    best_rank = better_count + 1
+                    
+                    # Worst rank: number of teams with greater or equal points
+                    equal_or_better_count = sum(1 for other_pts in scenario_points.values() if other_pts >= pts)
+                    worst_rank = equal_or_better_count
+                    
+                    if best_rank < absolute_best[tid]: absolute_best[tid] = best_rank
+                    if worst_rank > absolute_worst[tid]: absolute_worst[tid] = worst_rank
+
+            # Assign locked rank if best == worst
+            for i, team in enumerate(g_teams):
+                tid = team['team_id']
+                if absolute_best[tid] == absolute_worst[tid]:
+                    team['locked_rank'] = absolute_best[tid]
+
+    return standings
+
+def get_group_standings(standings: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+    """Group the overall sorted standings by group_name."""
+    groups = {}
+    for row in standings:
+        g = row['group_name']
+        if g not in groups:
+            groups[g] = []
+        groups[g].append(row)
+    return groups
+
+def get_top_third_place_teams(grouped_standings: Dict[str, List[Dict[str, Any]]], top_n: int = 8) -> List[Dict[str, Any]]:
+    """Extract third place teams from each group, sort them, and return the top N."""
+    third_place_teams = []
+    
+    for group_name, teams in grouped_standings.items():
+        if len(teams) >= 3:
+            # The list is already sorted by the tie-breakers within the group since calculate_standings sorts everything
+            # Wait, calculate_standings sorted ALL teams globally. 
+            # We need to sort within group first to find the 3rd place team.
+            # Let's ensure the teams are sorted correctly within the group
+            sorted_group = sorted(teams, key=lambda x: (x['points'], x['goal_difference'], x['goals_for']), reverse=True)
+            third_place_teams.append(sorted_group[2])
+
+    # Now sort the third place teams globally
+    sorted_thirds = sorted(third_place_teams, key=lambda x: (x['points'], x['goal_difference'], x['goals_for']), reverse=True)
+    
+    return sorted_thirds[:top_n]

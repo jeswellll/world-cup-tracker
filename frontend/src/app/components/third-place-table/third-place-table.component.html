@@ -1,0 +1,26 @@
+<div class="third-place-table glass-panel">
+  <h3>Third-Place Ranking (Top 8 Advance)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Team</th>
+        <th>Group</th>
+        <th>P</th>
+        <th>GD</th>
+        <th>Pts</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of standings; let i = index" [class.advances]="i < 8">
+        <td class="team-cell">
+          <span *ngIf="row.code" class="fi" [ngClass]="'fi-' + row.code.toLowerCase()"></span>
+          {{row.team}}
+        </td>
+        <td>{{row.group}}</td>
+        <td>{{row.played}}</td>
+        <td>{{row.gd}}</td>
+        <td><strong>{{row.points}}</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

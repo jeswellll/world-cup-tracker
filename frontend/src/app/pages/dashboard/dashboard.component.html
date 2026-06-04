@@ -1,0 +1,52 @@
+<div class="dashboard-container">
+  <header class="glass-panel main-header">
+    <div class="header-left">
+      <div class="logo-container">
+        <img src="images/world cup.jpg" alt="FIFA World Cup 26™ Logo" class="fwc-logo" />
+      </div>
+      <div class="title-container">
+        <h1>FIFA World Cup 26™</h1>
+        <p class="subtitle">Predictive Tournament Tracker</p>
+      </div>
+    </div>
+    
+    <div class="tabs-nav">
+      <button [class.active]="activeTab === 'standings'" (click)="setTab('standings')">Group Standings</button>
+      <button [class.active]="activeTab === 'bracket'" (click)="setTab('bracket')">Knockout Stage</button>
+      <button [class.active]="activeTab === 'calendar'" (click)="setTab('calendar')">Match Calendar</button>
+    </div>
+
+    <div class="header-accents">
+      <div class="accent cyan"></div>
+      <div class="accent magenta"></div>
+      <div class="accent green"></div>
+    </div>
+  </header>
+  
+  <div class="main-content">
+    <div class="tab-pane" *ngIf="activeTab === 'standings'">
+      <div class="groups-section">
+        <h2>Group Stage</h2>
+        <div class="groups-grid">
+          <app-group-table 
+            *ngFor="let group of groupKeys" 
+            [groupName]="group" 
+            [standings]="state.groups()[group]">
+          </app-group-table>
+        </div>
+        
+        <app-third-place-table [standings]="state.thirdPlace()"></app-third-place-table>
+      </div>
+    </div>
+    
+    <div class="tab-pane" *ngIf="activeTab === 'bracket'">
+      <div class="bracket-section">
+        <app-knockout-bracket></app-knockout-bracket>
+      </div>
+    </div>
+
+    <div class="tab-pane" *ngIf="activeTab === 'calendar'">
+      <app-calendar></app-calendar>
+    </div>
+  </div>
+</div>
