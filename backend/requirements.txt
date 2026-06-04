@@ -7,3 +7,5 @@ apscheduler
 httpx
 tenacity
 python-dotenv
+requests
+psycopg2-binary
