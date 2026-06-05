@@ -173,7 +173,20 @@ def update_match_result(match_id: int, result: schemas.MatchResult, db: Session 
 
 @app.post("/update-real-teams")
 def update_real_teams(db: Session = Depends(database.get_db)):
-    real_teams = [{"name": "Mexico", "code": "MEX"}, {"name": "South Africa", "code": "RSA"}, {"name": "South Korea", "code": "KOR"}, {"name": "Czechia", "code": "CZE"}, {"name": "Canada", "code": "CAN"}, {"name": "Bosnia-Herzegovina", "code": "BIH"}, {"name": "Haiti", "code": "HAI"}, {"name": "Paraguay", "code": "PAR"}, {"name": "Qatar", "code": "QAT"}, {"name": "Switzerland", "code": "SUI"}, {"name": "Brazil", "code": "BRA"}, {"name": "Morocco", "code": "MAR"}, {"name": "United States", "code": "USA"}, {"name": "Scotland", "code": "SCO"}, {"name": "Australia", "code": "AUS"}, {"name": "Turkey", "code": "TUR"}, {"name": "Germany", "code": "GER"}, {"name": "Cura\u00e7ao", "code": "CUW"}, {"name": "Netherlands", "code": "NED"}, {"name": "Japan", "code": "JPN"}, {"name": "Ivory Coast", "code": "CIV"}, {"name": "Ecuador", "code": "ECU"}, {"name": "Sweden", "code": "SWE"}, {"name": "Tunisia", "code": "TUN"}, {"name": "Spain", "code": "ESP"}, {"name": "Cape Verde Islands", "code": "CPV"}, {"name": "Belgium", "code": "BEL"}, {"name": "Egypt", "code": "EGY"}, {"name": "Saudi Arabia", "code": "KSA"}, {"name": "Uruguay", "code": "URY"}, {"name": "Iran", "code": "IRN"}, {"name": "New Zealand", "code": "NZL"}, {"name": "France", "code": "FRA"}, {"name": "Senegal", "code": "SEN"}, {"name": "Iraq", "code": "IRQ"}, {"name": "Norway", "code": "NOR"}, {"name": "Argentina", "code": "ARG"}, {"name": "Algeria", "code": "ALG"}, {"name": "Austria", "code": "AUT"}, {"name": "Jordan", "code": "JOR"}, {"name": "Portugal", "code": "POR"}, {"name": "Congo DR", "code": "COD"}, {"name": "England", "code": "ENG"}, {"name": "Croatia", "code": "CRO"}, {"name": "Ghana", "code": "GHA"}, {"name": "Panama", "code": "PAN"}, {"name": "Uzbekistan", "code": "UZB"}, {"name": "Colombia", "code": "COL"}]
+    real_teams = [
+        {"name": "Mexico", "code": "MEX"}, {"name": "South Africa", "code": "RSA"}, {"name": "South Korea", "code": "KOR"}, {"name": "Czechia", "code": "CZE"},
+        {"name": "Canada", "code": "CAN"}, {"name": "Bosnia-Herzegovina", "code": "BIH"}, {"name": "Qatar", "code": "QAT"}, {"name": "Switzerland", "code": "SUI"},
+        {"name": "Brazil", "code": "BRA"}, {"name": "Morocco", "code": "MAR"}, {"name": "Haiti", "code": "HAI"}, {"name": "Scotland", "code": "SCO"},
+        {"name": "United States", "code": "USA"}, {"name": "Paraguay", "code": "PAR"}, {"name": "Australia", "code": "AUS"}, {"name": "Turkey", "code": "TUR"},
+        {"name": "Germany", "code": "GER"}, {"name": "Cura\u00e7ao", "code": "CUW"}, {"name": "Ivory Coast", "code": "CIV"}, {"name": "Ecuador", "code": "ECU"},
+        {"name": "Netherlands", "code": "NED"}, {"name": "Japan", "code": "JPN"}, {"name": "Sweden", "code": "SWE"}, {"name": "Tunisia", "code": "TUN"},
+        {"name": "Belgium", "code": "BEL"}, {"name": "Egypt", "code": "EGY"}, {"name": "Iran", "code": "IRN"}, {"name": "New Zealand", "code": "NZL"},
+        {"name": "Spain", "code": "ESP"}, {"name": "Cape Verde Islands", "code": "CPV"}, {"name": "Saudi Arabia", "code": "KSA"}, {"name": "Uruguay", "code": "URY"},
+        {"name": "France", "code": "FRA"}, {"name": "Senegal", "code": "SEN"}, {"name": "Iraq", "code": "IRQ"}, {"name": "Norway", "code": "NOR"},
+        {"name": "Argentina", "code": "ARG"}, {"name": "Algeria", "code": "ALG"}, {"name": "Austria", "code": "AUT"}, {"name": "Jordan", "code": "JOR"},
+        {"name": "Portugal", "code": "POR"}, {"name": "Congo DR", "code": "COD"}, {"name": "Uzbekistan", "code": "UZB"}, {"name": "Colombia", "code": "COL"},
+        {"name": "England", "code": "ENG"}, {"name": "Croatia", "code": "CRO"}, {"name": "Ghana", "code": "GHA"}, {"name": "Panama", "code": "PAN"}
+    ]
     teams = db.query(models.Team).order_by(models.Team.id).all()
     if not teams or len(teams) < 48:
         return {"error": "Not enough teams to update."}
