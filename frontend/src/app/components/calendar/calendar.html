@@ -10,6 +10,7 @@
           <div class="match-venue" *ngIf="match.venue">{{ match.venue }}</div>
         </div>
         <div class="match-group">
+          <span class="match-number" style="font-size: 0.85rem; color: #a0aec0; margin-right: 8px;">Match {{ match.id }}</span>
           <span class="badge" [class.badge-knockout]="match.type === 'knockout'">
             <ng-container *ngIf="match.type === 'group'">Group {{ match.group_name }}</ng-container>
             <ng-container *ngIf="match.type === 'knockout'">{{ match.group_name }}</ng-container>
