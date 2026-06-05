@@ -217,8 +217,8 @@ def restore_dates(data: list[MatchDateData], db: Session = Depends(database.get_
         if not home or not away:
             continue
         match = db.query(models.Match).filter(
-            models.Match.home_team_id == home.id,
-            models.Match.away_team_id == away.id
+            ((models.Match.home_team_id == home.id) & (models.Match.away_team_id == away.id)) |
+            ((models.Match.home_team_id == away.id) & (models.Match.away_team_id == home.id))
         ).first()
         if match:
             match.date = m.date
