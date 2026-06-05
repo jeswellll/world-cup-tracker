@@ -33,6 +33,13 @@ app.add_middleware(
 def health_check():
     return {"status": "ok"}
 
+@app.post("/reset-db")
+def reset_database(db: Session = Depends(database.get_db)):
+    # Drop all tables and recreate them cleanly
+    models.Base.metadata.drop_all(bind=database.engine)
+    models.Base.metadata.create_all(bind=database.engine)
+    return {"msg": "Database completely wiped and recreated."}
+
 @app.post("/seed")
 def seed_database(db: Session = Depends(database.get_db)):
     # Basic seed logic
