@@ -187,12 +187,12 @@ def resolve_third_place_matchups(third_place_teams: List[Dict[str, Any]]) -> Dic
     # The 8 knockout slots and their allowed source groups for 3rd place teams
     slots = {
         74: ['A', 'B', 'C', 'D', 'F'],
-        76: ['C', 'D', 'F', 'G', 'H'],
-        79: ['B', 'E', 'F', 'I', 'J'],
-        80: ['A', 'E', 'H', 'I', 'J'],
-        81: ['C', 'E', 'F', 'H', 'I'],
-        82: ['E', 'F', 'G', 'I', 'J'],
-        85: ['E', 'H', 'I', 'J', 'K'],
+        77: ['C', 'D', 'F', 'G', 'H'],
+        79: ['C', 'E', 'F', 'H', 'I'],
+        80: ['E', 'H', 'I', 'J', 'K'],
+        81: ['B', 'E', 'F', 'I', 'J'],
+        82: ['A', 'E', 'H', 'I', 'J'],
+        85: ['E', 'F', 'G', 'I', 'J'],
         87: ['D', 'E', 'I', 'J', 'L']
     }
     
