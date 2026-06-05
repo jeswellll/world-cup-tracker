@@ -232,6 +232,20 @@ def restore_dates(data: list[MatchDateData], db: Session = Depends(database.get_
 
 import random
 
+@app.get("/reset-scores")
+def reset_scores(db: Session = Depends(database.get_db)):
+    """Resets all matches back to 'Scheduled' state without altering dates, venues, or team configurations."""
+    matches = db.query(models.Match).all()
+    updated = 0
+    for m in matches:
+        if m.status != 'Scheduled' or m.home_score is not None or m.away_score is not None:
+            m.status = 'Scheduled'
+            m.home_score = None
+            m.away_score = None
+            updated += 1
+    db.commit()
+    return {"msg": f"Reset {updated} matches back to Scheduled."}
+
 @app.get("/simulate-match")
 def simulate_match(db: Session = Depends(database.get_db)):
     """Simulates a live match by taking an 'In Progress' match and scoring a goal, or starting a new 'Scheduled' match."""
