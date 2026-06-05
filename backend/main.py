@@ -28,6 +28,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+@app.head("/")
+def health_check():
+    return {"status": "ok"}
+
 @app.post("/seed")
 def seed_database(db: Session = Depends(database.get_db)):
     # Basic seed logic
