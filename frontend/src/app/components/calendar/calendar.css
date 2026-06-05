@@ -64,7 +64,10 @@
 }
 
 .match-group {
-  width: 120px;
+  width: 180px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .badge {
