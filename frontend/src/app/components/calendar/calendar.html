@@ -8,6 +8,7 @@
         <div class="match-time">
           {{ match.date | date:'HH:mm' }}
           <div class="match-venue" *ngIf="match.venue">{{ match.venue }}</div>
+          <span *ngIf="match.status === 'In Progress'" style="color: #ff3366; font-size: 0.75rem; font-weight: bold; border: 1px solid #ff3366; padding: 1px 4px; border-radius: 4px; margin-top: 4px; display: inline-block; width: fit-content; animation: pulse 2s infinite;">LIVE</span>
         </div>
         <div class="match-group">
           <span class="match-number" style="font-size: 0.85rem; color: #a0aec0; margin-right: 8px;">Match {{ match.id }}</span>
@@ -21,9 +22,9 @@
             {{ match.home_team_name }}
             <span *ngIf="match.home_team_code" class="fi" [ngClass]="'fi-' + match.home_team_code.toLowerCase()" style="margin-left: 8px;"></span>
           </div>
-          <div class="score-box">
-            <span *ngIf="match.status === 'Finished'">{{ match.home_score }} - {{ match.away_score }}</span>
-            <span *ngIf="match.status !== 'Finished'">vs</span>
+          <div class="score-box" [class.live-score]="match.status === 'In Progress'">
+            <span *ngIf="match.status === 'Finished' || match.status === 'In Progress'">{{ match.home_score }} - {{ match.away_score }}</span>
+            <span *ngIf="match.status !== 'Finished' && match.status !== 'In Progress'">vs</span>
           </div>
           <div class="away-team" [class.tbd]="match.away_team_name.includes('Group')">
             <span *ngIf="match.away_team_code" class="fi" [ngClass]="'fi-' + match.away_team_code.toLowerCase()" style="margin-right: 8px;"></span>

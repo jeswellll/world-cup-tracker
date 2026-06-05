@@ -4,12 +4,13 @@
     <div class="match-meta">
       <span class="match-date">{{ match.date | date:'MMM d, HH:mm' }}</span>
       <span class="match-venue" *ngIf="match.venue">• {{ match.venue }}</span>
+      <span *ngIf="match.status === 'In Progress'" style="color: #ff3366; font-size: 0.75rem; font-weight: bold; border: 1px solid #ff3366; padding: 1px 4px; border-radius: 4px; margin-left: 8px; animation: pulse 2s infinite;">LIVE</span>
     </div>
     <div class="match-teams">
       <span class="home-team">{{ match.home_team_name }}</span>
-      <span class="score-box">
-        <span *ngIf="match.status === 'Finished'">{{ match.home_score }} - {{ match.away_score }}</span>
-        <span *ngIf="match.status !== 'Finished'">vs</span>
+      <span class="score-box" [class.live-score]="match.status === 'In Progress'">
+        <span *ngIf="match.status === 'Finished' || match.status === 'In Progress'">{{ match.home_score }} - {{ match.away_score }}</span>
+        <span *ngIf="match.status !== 'Finished' && match.status !== 'In Progress'">vs</span>
       </span>
       <span class="away-team">{{ match.away_team_name }}</span>
     </div>
