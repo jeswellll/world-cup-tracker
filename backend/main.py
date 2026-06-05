@@ -177,6 +177,12 @@ def update_real_teams(db: Session = Depends(database.get_db)):
     teams = db.query(models.Team).order_by(models.Team.id).all()
     if not teams or len(teams) < 48:
         return {"error": "Not enough teams to update."}
+    
+    # Temporarily append a suffix to avoid UNIQUE constraint violations when swapping
+    for t in teams:
+        t.code = t.code + "_tmp"
+    db.flush()
+
     for i, rt in enumerate(real_teams):
         teams[i].name = rt["name"]
         teams[i].code = rt["code"]
