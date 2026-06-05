@@ -141,6 +141,10 @@ def get_third_place_teams(db: Session = Depends(database.get_db)):
 
 @app.get("/groups/third-place-assignments")
 def get_third_place_assignments(db: Session = Depends(database.get_db)):
+    unfinished_matches = db.query(models.Match).filter(models.Match.status != "Finished").count()
+    if unfinished_matches > 0:
+        return {}
+
     grouped = _get_standings_data(db)
     top_thirds = sorting_engine.get_top_third_place_teams(grouped, top_n=8)
     
