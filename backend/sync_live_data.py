@@ -54,12 +54,22 @@ def sync_matches_from_api(db: Session):
             score_data = m.get("score", {}).get("fullTime", {})
             h_score = score_data.get("home")
             a_score = score_data.get("away")
+            venue_name = m.get("venue")
             
+            updated = False
             # Update score if available
             if h_score is not None and a_score is not None:
                 db_match.home_score = h_score
                 db_match.away_score = a_score
                 db_match.status = "Finished" if status in ["FINISHED", "AWARDED"] else "In Progress"
+                updated = True
+                
+            # Update venue if available
+            if venue_name and db_match.venue != venue_name:
+                db_match.venue = venue_name
+                updated = True
+                
+            if updated:
                 updated_count += 1
                 
     db.commit()

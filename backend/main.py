@@ -202,6 +202,30 @@ def update_real_teams(db: Session = Depends(database.get_db)):
     db.commit()
     return {"msg": "Updated 48 teams to real names."}
 
+from pydantic import BaseModel
+class MatchDateData(BaseModel):
+    home_code: str
+    away_code: str
+    date: str
+
+@app.post("/restore-dates")
+def restore_dates(data: list[MatchDateData], db: Session = Depends(database.get_db)):
+    updated = 0
+    for m in data:
+        home = db.query(models.Team).filter(models.Team.code == m.home_code).first()
+        away = db.query(models.Team).filter(models.Team.code == m.away_code).first()
+        if not home or not away:
+            continue
+        match = db.query(models.Match).filter(
+            models.Match.home_team_id == home.id,
+            models.Match.away_team_id == away.id
+        ).first()
+        if match:
+            match.date = m.date
+            updated += 1
+    db.commit()
+    return {"msg": f"Restored dates for {updated} matches."}
+
 import random
 
 @app.get("/simulate-match")
