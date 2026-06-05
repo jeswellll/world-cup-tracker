@@ -132,6 +132,25 @@ def get_third_place_teams(db: Session = Depends(database.get_db)):
     top_thirds = sorting_engine.get_top_third_place_teams(grouped, top_n=8)
     return top_thirds
 
+@app.get("/groups/third-place-assignments")
+def get_third_place_assignments(db: Session = Depends(database.get_db)):
+    grouped = _get_standings_data(db)
+    top_thirds = sorting_engine.get_top_third_place_teams(grouped, top_n=8)
+    
+    # Convert to dicts expected by sorting_engine
+    top_thirds_dicts = [
+        {
+            'team_id': t['team_id'],
+            'team_name': t['team_name'],
+            'code': t['team_code'],
+            'group_name': t['group_name']
+        }
+        for t in top_thirds
+    ]
+    
+    assignments = sorting_engine.resolve_third_place_matchups(top_thirds_dicts)
+    return assignments
+
 @app.post("/matches/{match_id}/result", response_model=schemas.Match)
 def update_match_result(match_id: int, result: schemas.MatchResult, db: Session = Depends(database.get_db)):
     match = db.query(models.Match).filter(models.Match.id == match_id).first()

@@ -73,6 +73,20 @@ export class ApiService {
     return this.http.get<Match[]>(`${this.baseUrl}/matches`);
   }
 
+  getThirdPlaceAssignments(): Observable<Record<string, any>> {
+    return this.http.get<Record<string, any>>(`${this.baseUrl}/groups/third-place-assignments`).pipe(
+      map(data => {
+        // We'll also map the ISO codes just to be safe
+        Object.keys(data).forEach(k => {
+           if (data[k].code) {
+             data[k].code = FIFA_TO_ISO[data[k].code] || data[k].code;
+           }
+        });
+        return data;
+      })
+    );
+  }
+
   updateMatch(matchId: number, homeScore: number, awayScore: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/matches/${matchId}/result`, { home_score: homeScore, away_score: awayScore });
   }

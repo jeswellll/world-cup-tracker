@@ -117,6 +117,7 @@
               </div>
               <div class="team-row">
                 <div class="team-name" [class.tbd]="match.teamA?.includes('Group')">
+                  <span *ngIf="match.teamACode" class="fi" [ngClass]="'fi-' + match.teamACode.toLowerCase()"></span>
                   {{ match.teamA || 'TBD' }}
                   <div class="tooltip" *ngIf="match.sourceGroupA">
                     <strong>{{ match.sourceGroupA.length === 1 ? 'Group ' + match.sourceGroupA + ' Standings' :
@@ -135,6 +136,7 @@
               </div>
               <div class="team-row">
                 <div class="team-name" [class.tbd]="match.teamB?.includes('Group')">
+                  <span *ngIf="match.teamBCode" class="fi" [ngClass]="'fi-' + match.teamBCode.toLowerCase()"></span>
                   {{ match.teamB || 'TBD' }}
                   <div class="tooltip" *ngIf="match.sourceGroupB">
                     <strong>{{ match.sourceGroupB.length === 1 ? 'Group ' + match.sourceGroupB + ' Standings' :

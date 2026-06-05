@@ -28,13 +28,12 @@ export class TournamentState {
   groups = signal<Record<string, GroupStanding[]>>({});
   thirdPlace = signal<GroupStanding[]>([]);
   matches = signal<Match[]>([]);
-  
-
+  thirdPlaceAssignments = signal<Record<string, any>>({});
 
   allKnockoutMatches = computed<MatchNode[]>(() => {
     const groups = this.groups();
     
-    const resolveTeam = (desc: string | undefined, groupName: string | null | undefined): string => {
+    const resolveTeam = (desc: string | undefined, groupName: string | null | undefined, matchId?: number): string => {
       if (!desc) return 'TBD';
       if (!groupName) return desc;
       if (desc.startsWith('1st Group')) {
@@ -45,10 +44,14 @@ export class TournamentState {
         const team = groups[groupName]?.find(t => t.locked_rank === 2);
         return team ? team.team : desc;
       }
+      if (desc.startsWith('3rd Group') && matchId) {
+        const assignment = this.thirdPlaceAssignments()[matchId];
+        return assignment ? assignment.team_name : desc;
+      }
       return desc; // 3rd Group A/B/C/D/F stays as is until backend resolves
     };
 
-    const getCode = (desc: string | undefined, groupName: string | null | undefined): string | null => {
+    const getCode = (desc: string | undefined, groupName: string | null | undefined, matchId?: number): string | null => {
       if (!desc || !groupName) return null;
       if (desc.startsWith('1st Group')) {
         const team = groups[groupName]?.find(t => t.locked_rank === 1);
@@ -57,6 +60,10 @@ export class TournamentState {
       if (desc.startsWith('2nd Group')) {
         const team = groups[groupName]?.find(t => t.locked_rank === 2);
         return team ? (team.code || null) : null;
+      }
+      if (desc.startsWith('3rd Group') && matchId) {
+        const assignment = this.thirdPlaceAssignments()[matchId];
+        return assignment ? (assignment.code || null) : null;
       }
       return null;
     };
@@ -98,10 +105,10 @@ export class TournamentState {
 
     const matchNodes = hardcoded.map(m => ({
       ...m,
-      teamA: resolveTeam(m.teamA, m.sourceGroupA),
-      teamB: resolveTeam(m.teamB, m.sourceGroupB),
-      teamACode: getCode(m.teamA, m.sourceGroupA),
-      teamBCode: getCode(m.teamB, m.sourceGroupB)
+      teamA: resolveTeam(m.teamA, m.sourceGroupA, m.id),
+      teamB: resolveTeam(m.teamB, m.sourceGroupB, m.id),
+      teamACode: getCode(m.teamA, m.sourceGroupA, m.id),
+      teamBCode: getCode(m.teamB, m.sourceGroupB, m.id)
     }));
 
     return matchNodes;
@@ -150,5 +157,6 @@ export class TournamentState {
     this.apiService.getGroups().subscribe(data => this.groups.set(data));
     this.apiService.getThirdPlace().subscribe(data => this.thirdPlace.set(data));
     this.apiService.getMatches().subscribe(data => this.matches.set(data));
+    this.apiService.getThirdPlaceAssignments().subscribe(data => this.thirdPlaceAssignments.set(data));
   }
 }

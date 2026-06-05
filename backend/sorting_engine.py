@@ -29,7 +29,7 @@ def calculate_standings(matches: List[Dict[str, Any]], teams: List[Dict[str, Any
     # Process matches
     df_matches = pd.DataFrame(matches)
     if not df_matches.empty:
-        finished_matches = df_matches[df_matches['status'] == 'Finished']
+        finished_matches = df_matches[df_matches['status'].isin(['Finished', 'In Progress'])]
         for _, match in finished_matches.iterrows():
             h_id = match['home_team_id']
             a_id = match['away_team_id']
@@ -174,3 +174,62 @@ def get_top_third_place_teams(grouped_standings: Dict[str, List[Dict[str, Any]]]
     sorted_thirds = sorted(third_place_teams, key=lambda x: (x['points'], x['goal_difference'], x['goals_for']), reverse=True)
     
     return sorted_thirds[:top_n]
+
+def resolve_third_place_matchups(third_place_teams: List[Dict[str, Any]]) -> Dict[int, Dict[str, Any]]:
+    """
+    Given the top 8 third-place teams (each should have a 'group_name' and 'team_id'),
+    assign them to the 8 designated Match IDs.
+    Returns a dictionary mapping Match ID -> Team dictionary.
+    """
+    if len(third_place_teams) != 8:
+        return {}
+        
+    # The 8 knockout slots and their allowed source groups for 3rd place teams
+    slots = {
+        74: ['A', 'B', 'C', 'D', 'F'],
+        76: ['C', 'D', 'F', 'G', 'H'],
+        79: ['B', 'E', 'F', 'I', 'J'],
+        80: ['A', 'E', 'H', 'I', 'J'],
+        81: ['C', 'E', 'F', 'H', 'I'],
+        82: ['E', 'F', 'G', 'I', 'J'],
+        85: ['E', 'H', 'I', 'J', 'K'],
+        87: ['D', 'E', 'I', 'J', 'L']
+    }
+    
+    match_ids = list(slots.keys())
+    assignments = {} # Match ID -> Team
+    used_teams = set()
+    
+    def backtrack(slot_idx: int) -> bool:
+        if slot_idx == len(match_ids):
+            return True # All assigned successfully!
+            
+        current_match_id = match_ids[slot_idx]
+        allowed_groups = slots[current_match_id]
+        
+        for team in third_place_teams:
+            team_id = team['team_id']
+            group = team['group_name']
+            
+            if team_id not in used_teams and group in allowed_groups:
+                # Try assigning this team
+                assignments[current_match_id] = team
+                used_teams.add(team_id)
+                
+                # Recurse
+                if backtrack(slot_idx + 1):
+                    return True
+                    
+                # Backtrack
+                used_teams.remove(team_id)
+                del assignments[current_match_id]
+                
+        return False
+        
+    # Start the matching algorithm
+    success = backtrack(0)
+    
+    if success:
+        return assignments
+    else:
+        return {}
