@@ -157,63 +157,6 @@ def update_real_teams(db: Session = Depends(database.get_db)):
     db.commit()
     return {"msg": "Updated 48 teams to real names."}
 
-from pydantic import BaseModel
-from typing import Optional, Any
-class DBRestoreData(BaseModel):
-    teams: list[dict]
-    tournament_teams: list[dict]
-    matches: list[dict]
-
-@app.post("/restore-db")
-def restore_db(data: DBRestoreData, db: Session = Depends(database.get_db)):
-    # Delete all existing data safely
-    db.query(models.Match).delete()
-    db.query(models.TournamentTeam).delete()
-    db.query(models.Tournament).delete()
-    db.query(models.Team).delete()
-    db.flush()
-
-    t = models.Tournament(name="FIFA World Cup", year=2026)
-    db.add(t)
-    db.flush()
-
-    # Re-add teams keeping same ID mapping
-    team_map = {}
-    for team_dict in data.teams:
-        t_model = models.Team(id=team_dict['id'], name=team_dict['name'], code=team_dict['code'])
-        db.add(t_model)
-        team_map[team_dict['id']] = team_dict['id']
-    
-    db.flush()
-
-    for tt_dict in data.tournament_teams:
-        tt_model = models.TournamentTeam(
-            id=tt_dict['id'], 
-            tournament_id=t.id, 
-            team_id=tt_dict['team_id'], 
-            group_name=tt_dict['group_name']
-        )
-        db.add(tt_model)
-
-    db.flush()
-
-    for m_dict in data.matches:
-        m_model = models.Match(
-            id=m_dict['id'],
-            tournament_id=t.id,
-            home_team_id=m_dict['home_team_id'],
-            away_team_id=m_dict['away_team_id'],
-            home_score=m_dict['home_score'],
-            away_score=m_dict['away_score'],
-            status=m_dict['status'],
-            group_name=m_dict['group_name'],
-            date=m_dict['date']
-        )
-        db.add(m_model)
-
-    db.commit()
-    return {"msg": "Database restored successfully."}
-
 import sync_live_data
 
 @app.post("/matches/sync-live")
