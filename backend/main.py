@@ -157,6 +157,31 @@ def update_real_teams(db: Session = Depends(database.get_db)):
     db.commit()
     return {"msg": "Updated 48 teams to real names."}
 
+import random
+
+@app.get("/simulate-match")
+def simulate_match(db: Session = Depends(database.get_db)):
+    """Simulates a live match by taking the first 'Scheduled' match, making it 'In Progress', and giving it a random score."""
+    match = db.query(models.Match).filter(models.Match.status == 'Scheduled').first()
+    if not match:
+        match = db.query(models.Match).filter(models.Match.status == 'In Progress').first()
+        if not match:
+            return {"msg": "No matches available to simulate."}
+            
+    match.status = 'In Progress'
+    if match.home_score is None:
+        match.home_score = 0
+        match.away_score = 0
+    else:
+        # Give a goal to either home or away randomly
+        if random.choice([True, False]):
+            match.home_score += 1
+        else:
+            match.away_score += 1
+            
+    db.commit()
+    return {"msg": f"Simulated {match.home_team.name} {match.home_score} - {match.away_score} {match.away_team.name} (In Progress)"}
+
 import sync_live_data
 
 @app.post("/matches/sync-live")
