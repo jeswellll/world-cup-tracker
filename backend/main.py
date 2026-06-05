@@ -161,26 +161,36 @@ import random
 
 @app.get("/simulate-match")
 def simulate_match(db: Session = Depends(database.get_db)):
-    """Simulates a live match by taking the first 'Scheduled' match, making it 'In Progress', and giving it a random score."""
-    match = db.query(models.Match).filter(models.Match.status == 'Scheduled').first()
+    """Simulates a live match by taking an 'In Progress' match and scoring a goal, or starting a new 'Scheduled' match."""
+    match = db.query(models.Match).filter(models.Match.status == 'In Progress').first()
+    
     if not match:
-        match = db.query(models.Match).filter(models.Match.status == 'In Progress').first()
+        match = db.query(models.Match).filter(models.Match.status == 'Scheduled').first()
         if not match:
             return {"msg": "No matches available to simulate."}
-            
-    match.status = 'In Progress'
-    if match.home_score is None:
+        match.status = 'In Progress'
         match.home_score = 0
         match.away_score = 0
+    
+    # Give a goal to either home or away randomly
+    if random.choice([True, False]):
+        match.home_score += 1
     else:
-        # Give a goal to either home or away randomly
-        if random.choice([True, False]):
-            match.home_score += 1
-        else:
-            match.away_score += 1
-            
+        match.away_score += 1
+        
     db.commit()
     return {"msg": f"Simulated {match.home_team.name} {match.home_score} - {match.away_score} {match.away_team.name} (In Progress)"}
+
+@app.get("/simulate-end-match")
+def simulate_end_match(db: Session = Depends(database.get_db)):
+    """Finds the current 'In Progress' match and sets it to 'Finished'."""
+    match = db.query(models.Match).filter(models.Match.status == 'In Progress').first()
+    if not match:
+        return {"msg": "There are no matches currently in progress."}
+        
+    match.status = 'Finished'
+    db.commit()
+    return {"msg": f"Match Finished! {match.home_team.name} {match.home_score} - {match.away_score} {match.away_team.name}"}
 
 import sync_live_data
 
