@@ -14,7 +14,7 @@ def dynamic_sync_job():
     # Check if there are any matches in play right now
     db = next(database.get_db())
     try:
-        active_matches = db.query(models.Match).filter(models.Match.status == "IN_PLAY").count()
+        active_matches = db.query(models.Match).filter(models.Match.status == "In Progress").count()
     except Exception as e:
         db.close()
         return
