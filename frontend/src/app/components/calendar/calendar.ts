@@ -47,9 +47,11 @@ export class Calendar {
         away_team_name: m.teamB || 'TBD',
         home_team_code: m.teamACode || null,
         away_team_code: m.teamBCode || null,
-        home_score: null,
-        away_score: null,
-        status: 'Scheduled',
+        home_score: m.home_score !== undefined ? m.home_score : null,
+        away_score: m.away_score !== undefined ? m.away_score : null,
+        home_score_penalties: m.home_score_penalties !== undefined ? m.home_score_penalties : null,
+        away_score_penalties: m.away_score_penalties !== undefined ? m.away_score_penalties : null,
+        status: m.status || 'Scheduled',
         type: 'knockout'
       });
     });
