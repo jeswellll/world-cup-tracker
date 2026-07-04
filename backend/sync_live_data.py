@@ -24,8 +24,31 @@ def sync_matches_from_api(db: Session):
     data = response.json()
     matches_data = data.get("matches", [])
     
-    import populate_knockouts
-    populate_knockouts.populate_round_of_32(db)
+    # 1. Sync Knockout Structure (teams & dates) sequentially for each stage from the API
+    for stage_name in ["LAST_32", "LAST_16", "QUARTER_FINALS", "SEMI_FINALS", "THIRD_PLACE", "FINAL"]:
+        api_stage_matches = sorted([m for m in matches_data if m.get("stage") == stage_name], key=lambda x: x.get("utcDate", ""))
+        db_stage_matches = db.query(models.Match).filter(models.Match.stage_name == stage_name).order_by(models.Match.date).all()
+        
+        # Sequentially map them since dates and ordering should match 1-to-1
+        for api_m, db_m in zip(api_stage_matches, db_stage_matches):
+            h_tla = api_m.get("homeTeam", {}).get("tla")
+            a_tla = api_m.get("awayTeam", {}).get("tla")
+            
+            # Force update home/away teams from API to override any local simulated standings
+            if h_tla:
+                h_team = db.query(models.Team).filter(models.Team.code == h_tla).first()
+                if h_team: db_m.home_team_id = h_team.id
+            if a_tla:
+                a_team = db.query(models.Team).filter(models.Team.code == a_tla).first()
+                if a_team: db_m.away_team_id = a_team.id
+                
+            api_date = api_m.get("utcDate")
+            if api_date: db_m.date = api_date
+            
+            venue = api_m.get("venue")
+            if venue: db_m.venue = venue
+            
+    db.commit()
     
     updated_count = 0
     for m in matches_data:
