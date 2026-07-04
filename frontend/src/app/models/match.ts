@@ -9,6 +9,8 @@ export interface Match {
   away_team_code?: string | null;
   home_score: number | null;
   away_score: number | null;
+  home_score_penalties?: number | null;
+  away_score_penalties?: number | null;
   status: string;
   group_name: string;
   date: string | null;
