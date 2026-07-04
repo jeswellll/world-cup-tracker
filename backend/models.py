@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -32,14 +32,21 @@ class Match(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     tournament_id = Column(Integer, ForeignKey("tournaments.id"))
-    home_team_id = Column(Integer, ForeignKey("teams.id"))
-    away_team_id = Column(Integer, ForeignKey("teams.id"))
+    home_team_id = Column(Integer, ForeignKey("teams.id"), nullable=True)
+    away_team_id = Column(Integer, ForeignKey("teams.id"), nullable=True)
     home_score = Column(Integer, nullable=True)
     away_score = Column(Integer, nullable=True)
+    home_score_penalties = Column(Integer, nullable=True)
+    away_score_penalties = Column(Integer, nullable=True)
     status = Column(String, default="Scheduled") # Scheduled, Finished
     group_name = Column(String, index=True, nullable=True)
     date = Column(String, nullable=True)
     venue = Column(String, nullable=True)
+    is_knockout = Column(Boolean, default=False)
+    next_match_id = Column(Integer, ForeignKey("matches.id"), nullable=True)
+    is_next_match_home = Column(Boolean, default=True)
+    stage_name = Column(String, nullable=True)
+
 
     tournament = relationship("Tournament")
     home_team = relationship("Team", foreign_keys=[home_team_id])

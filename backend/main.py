@@ -87,8 +87,59 @@ def seed_database(db: Session = Depends(database.get_db)):
             )
             db.add(m)
     
+    # Seed Knockout Matches
+    knockouts = [
+        {'id': 73, 'next_match_id': 90, 'is_next_match_home': True, 'stage': 'LAST_32', 'date': '2026-06-28T19:00:00.000Z', 'venue': 'Los Angeles (Inglewood)'},
+        {'id': 74, 'next_match_id': 89, 'is_next_match_home': True, 'stage': 'LAST_32', 'date': '2026-06-29T20:30:00.000Z', 'venue': 'Boston (Foxborough)'},
+        {'id': 75, 'next_match_id': 90, 'is_next_match_home': False, 'stage': 'LAST_32', 'date': '2026-06-30T01:00:00.000Z', 'venue': 'Monterrey (Guadalupe)'},
+        {'id': 76, 'next_match_id': 91, 'is_next_match_home': True, 'stage': 'LAST_32', 'date': '2026-06-29T17:00:00.000Z', 'venue': 'Houston'},
+        {'id': 77, 'next_match_id': 89, 'is_next_match_home': False, 'stage': 'LAST_32', 'date': '2026-06-30T21:00:00.000Z', 'venue': 'New York/New Jersey (East Rutherford)'},
+        {'id': 78, 'next_match_id': 91, 'is_next_match_home': False, 'stage': 'LAST_32', 'date': '2026-06-30T17:00:00.000Z', 'venue': 'Dallas (Arlington)'},
+        {'id': 79, 'next_match_id': 92, 'is_next_match_home': True, 'stage': 'LAST_32', 'date': '2026-07-01T01:00:00.000Z', 'venue': 'Mexico City'},
+        {'id': 80, 'next_match_id': 92, 'is_next_match_home': False, 'stage': 'LAST_32', 'date': '2026-07-01T16:00:00.000Z', 'venue': 'Atlanta'},
+        {'id': 81, 'next_match_id': 94, 'is_next_match_home': True, 'stage': 'LAST_32', 'date': '2026-07-02T00:00:00.000Z', 'venue': 'San Francisco Bay Area (Santa Clara)'},
+        {'id': 82, 'next_match_id': 94, 'is_next_match_home': False, 'stage': 'LAST_32', 'date': '2026-07-01T20:00:00.000Z', 'venue': 'Seattle'},
+        {'id': 83, 'next_match_id': 93, 'is_next_match_home': True, 'stage': 'LAST_32', 'date': '2026-07-02T23:00:00.000Z', 'venue': 'Toronto'},
+        {'id': 84, 'next_match_id': 93, 'is_next_match_home': False, 'stage': 'LAST_32', 'date': '2026-07-02T19:00:00.000Z', 'venue': 'Los Angeles (Inglewood)'},
+        {'id': 85, 'next_match_id': 96, 'is_next_match_home': True, 'stage': 'LAST_32', 'date': '2026-07-03T03:00:00.000Z', 'venue': 'Vancouver'},
+        {'id': 86, 'next_match_id': 95, 'is_next_match_home': True, 'stage': 'LAST_32', 'date': '2026-07-03T22:00:00.000Z', 'venue': 'Miami (Miami Gardens)'},
+        {'id': 87, 'next_match_id': 96, 'is_next_match_home': False, 'stage': 'LAST_32', 'date': '2026-07-04T01:30:00.000Z', 'venue': 'Kansas City'},
+        {'id': 88, 'next_match_id': 95, 'is_next_match_home': False, 'stage': 'LAST_32', 'date': '2026-07-03T18:00:00.000Z', 'venue': 'Dallas (Arlington)'},
+        {'id': 89, 'next_match_id': 97, 'is_next_match_home': True, 'stage': 'LAST_16', 'date': '2026-07-04T21:00:00.000Z', 'venue': 'Philadelphia'},
+        {'id': 90, 'next_match_id': 97, 'is_next_match_home': False, 'stage': 'LAST_16', 'date': '2026-07-04T17:00:00.000Z', 'venue': 'Houston'},
+        {'id': 91, 'next_match_id': 99, 'is_next_match_home': True, 'stage': 'LAST_16', 'date': '2026-07-05T20:00:00.000Z', 'venue': 'New York/New Jersey (East Rutherford)'},
+        {'id': 92, 'next_match_id': 99, 'is_next_match_home': False, 'stage': 'LAST_16', 'date': '2026-07-06T00:00:00.000Z', 'venue': 'Mexico City'},
+        {'id': 93, 'next_match_id': 98, 'is_next_match_home': True, 'stage': 'LAST_16', 'date': '2026-07-06T19:00:00.000Z', 'venue': 'Dallas (Arlington)'},
+        {'id': 94, 'next_match_id': 98, 'is_next_match_home': False, 'stage': 'LAST_16', 'date': '2026-07-07T00:00:00.000Z', 'venue': 'Seattle'},
+        {'id': 95, 'next_match_id': 100, 'is_next_match_home': True, 'stage': 'LAST_16', 'date': '2026-07-07T16:00:00.000Z', 'venue': 'Atlanta'},
+        {'id': 96, 'next_match_id': 100, 'is_next_match_home': False, 'stage': 'LAST_16', 'date': '2026-07-07T20:00:00.000Z', 'venue': 'Vancouver'},
+        {'id': 97, 'next_match_id': 101, 'is_next_match_home': True, 'stage': 'QUARTER_FINALS', 'date': '2026-07-09T20:00:00.000Z', 'venue': 'Boston (Foxborough)'},
+        {'id': 98, 'next_match_id': 101, 'is_next_match_home': False, 'stage': 'QUARTER_FINALS', 'date': '2026-07-10T19:00:00.000Z', 'venue': 'Los Angeles (Inglewood)'},
+        {'id': 99, 'next_match_id': 102, 'is_next_match_home': True, 'stage': 'QUARTER_FINALS', 'date': '2026-07-11T21:00:00.000Z', 'venue': 'Miami (Miami Gardens)'},
+        {'id': 100, 'next_match_id': 102, 'is_next_match_home': False, 'stage': 'QUARTER_FINALS', 'date': '2026-07-12T01:00:00.000Z', 'venue': 'Kansas City'},
+        {'id': 101, 'next_match_id': 104, 'is_next_match_home': True, 'stage': 'SEMI_FINALS', 'date': '2026-07-14T19:00:00.000Z', 'venue': 'Dallas (Arlington)'},
+        {'id': 102, 'next_match_id': 104, 'is_next_match_home': False, 'stage': 'SEMI_FINALS', 'date': '2026-07-15T19:00:00.000Z', 'venue': 'Atlanta'},
+        {'id': 103, 'next_match_id': None, 'is_next_match_home': True, 'stage': 'THIRD_PLACE', 'date': '2026-07-18T21:00:00.000Z', 'venue': 'Miami (Miami Gardens)'},
+        {'id': 104, 'next_match_id': None, 'is_next_match_home': True, 'stage': 'FINAL', 'date': '2026-07-19T19:00:00.000Z', 'venue': 'New York/New Jersey (East Rutherford)'},
+    ]
+    for k in knockouts:
+        m = models.Match(
+            id=k['id'],
+            tournament_id=t.id,
+            home_team_id=None,
+            away_team_id=None,
+            is_knockout=True,
+            next_match_id=k['next_match_id'],
+            is_next_match_home=k['is_next_match_home'],
+            stage_name=k['stage'],
+            date=k['date'],
+            venue=k['venue'],
+            status="Scheduled"
+        )
+        db.add(m)
+    
     db.commit()
-    return {"msg": "Seeded 48 teams, 12 groups, and group stage matches."}
+    return {"msg": "Seeded 48 teams, 12 groups, group stage matches, and 32 knockout matches."}
 
 
 def _get_standings_data(db: Session):

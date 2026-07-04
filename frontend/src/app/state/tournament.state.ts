@@ -14,6 +14,11 @@ export interface MatchNode {
   teamBCode?: string | null;
   teamA?: string;
   teamB?: string;
+  home_score?: number | null;
+  away_score?: number | null;
+  home_score_penalties?: number | null;
+  away_score_penalties?: number | null;
+  status?: string;
 }
 
 export interface Round {
@@ -32,6 +37,7 @@ export class TournamentState {
 
   allKnockoutMatches = computed<MatchNode[]>(() => {
     const groups = this.groups();
+    const liveMatches = this.matches();
     
     const resolveTeam = (desc: string | undefined, groupName: string | null | undefined, matchId?: number): string => {
       if (!desc) return 'TBD';
@@ -48,7 +54,7 @@ export class TournamentState {
         const assignment = this.thirdPlaceAssignments()[matchId];
         return assignment ? assignment.team_name : desc;
       }
-      return desc; // 3rd Group A/B/C/D/F stays as is until backend resolves
+      return desc; 
     };
 
     const getCode = (desc: string | undefined, groupName: string | null | undefined, matchId?: number): string | null => {
@@ -103,13 +109,39 @@ export class TournamentState {
       { id: 104, name: "M104", date: "2026-07-19T19:00:00.000Z", venue: "New York/New Jersey (East Rutherford)", teamA: "Winner Match 101", teamB: "Winner Match 102" }
     ];
 
-    const matchNodes = hardcoded.map(m => ({
-      ...m,
-      teamA: resolveTeam(m.teamA, m.sourceGroupA, m.id),
-      teamB: resolveTeam(m.teamB, m.sourceGroupB, m.id),
-      teamACode: getCode(m.teamA, m.sourceGroupA, m.id),
-      teamBCode: getCode(m.teamB, m.sourceGroupB, m.id)
-    }));
+    const matchNodes = hardcoded.map(m => {
+      const liveData = liveMatches.find(live => live.id === m.id);
+      
+      const teamAString = liveData?.home_team_name && liveData.home_team_name !== 'Unknown' 
+          ? liveData.home_team_name 
+          : resolveTeam(m.teamA, m.sourceGroupA, m.id);
+          
+      const teamBString = liveData?.away_team_name && liveData.away_team_name !== 'Unknown' 
+          ? liveData.away_team_name 
+          : resolveTeam(m.teamB, m.sourceGroupB, m.id);
+          
+      // Find the code using the liveData or fallback to frontend calculations
+      const codeA = liveData?.home_team_name && liveData.home_team_name !== 'Unknown' 
+          ? null // Ideally we'd map name to code here, but the backend sends away_team_name. We should add team codes to Match object in backend!
+          : getCode(m.teamA, m.sourceGroupA, m.id);
+          
+      const codeB = liveData?.away_team_name && liveData.away_team_name !== 'Unknown' 
+          ? null
+          : getCode(m.teamB, m.sourceGroupB, m.id);
+
+      return {
+        ...m,
+        teamA: teamAString,
+        teamB: teamBString,
+        teamACode: codeA,
+        teamBCode: codeB,
+        home_score: liveData?.home_score,
+        away_score: liveData?.away_score,
+        home_score_penalties: (liveData as any)?.home_score_penalties,
+        away_score_penalties: (liveData as any)?.away_score_penalties,
+        status: liveData?.status
+      };
+    });
 
     return matchNodes;
   });

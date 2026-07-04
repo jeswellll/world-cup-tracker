@@ -37,7 +37,11 @@
                     </ul>
                   </div>
                 </div>
-                <span class="score">-</span>
+                <span class="score">
+                  <span *ngIf="match.home_score_penalties != null" class="penalties">({{ match.home_score_penalties }}) </span>
+                  <ng-container *ngIf="match.home_score != null; else emptyScore">{{ match.home_score }}</ng-container>
+                  <ng-template #emptyScore>-</ng-template>
+                </span>
               </div>
               <div class="team-row">
                 <div class="team-name" [class.tbd]="match.teamB?.includes('Group')">
@@ -56,7 +60,11 @@
                     </ul>
                   </div>
                 </div>
-                <span class="score">-</span>
+                <span class="score">
+                  <span *ngIf="match.away_score_penalties != null" class="penalties">({{ match.away_score_penalties }}) </span>
+                  <ng-container *ngIf="match.away_score != null; else emptyScore2">{{ match.away_score }}</ng-container>
+                  <ng-template #emptyScore2>-</ng-template>
+                </span>
               </div>
             </div>
 
@@ -85,7 +93,11 @@
                     [ngClass]="'fi-' + centerFinal.teamACode.toLowerCase()"></span>
                   {{ centerFinal.teamA }}
                 </div>
-                <span class="score">-</span>
+                <span class="score">
+                  <span *ngIf="centerFinal.home_score_penalties != null" class="penalties">({{ centerFinal.home_score_penalties }}) </span>
+                  <ng-container *ngIf="centerFinal.home_score != null; else emptyScore3">{{ centerFinal.home_score }}</ng-container>
+                  <ng-template #emptyScore3>-</ng-template>
+                </span>
               </div>
               <div class="team-row">
                 <div class="team-name tbd">
@@ -93,7 +105,11 @@
                     [ngClass]="'fi-' + centerFinal.teamBCode.toLowerCase()"></span>
                   {{ centerFinal.teamB }}
                 </div>
-                <span class="score">-</span>
+                <span class="score">
+                  <span *ngIf="centerFinal.away_score_penalties != null" class="penalties">({{ centerFinal.away_score_penalties }}) </span>
+                  <ng-container *ngIf="centerFinal.away_score != null; else emptyScore4">{{ centerFinal.away_score }}</ng-container>
+                  <ng-template #emptyScore4>-</ng-template>
+                </span>
               </div>
             </div>
           </div>
@@ -132,7 +148,11 @@
                     </ul>
                   </div>
                 </div>
-                <span class="score">-</span>
+                <span class="score">
+                  <span *ngIf="match.home_score_penalties != null" class="penalties">({{ match.home_score_penalties }}) </span>
+                  <ng-container *ngIf="match.home_score != null; else emptyScore5">{{ match.home_score }}</ng-container>
+                  <ng-template #emptyScore5>-</ng-template>
+                </span>
               </div>
               <div class="team-row">
                 <div class="team-name" [class.tbd]="match.teamB?.includes('Group')">
@@ -151,7 +171,11 @@
                     </ul>
                   </div>
                 </div>
-                <span class="score">-</span>
+                <span class="score">
+                  <span *ngIf="match.away_score_penalties != null" class="penalties">({{ match.away_score_penalties }}) </span>
+                  <ng-container *ngIf="match.away_score != null; else emptyScore6">{{ match.away_score }}</ng-container>
+                  <ng-template #emptyScore6>-</ng-template>
+                </span>
               </div>
             </div>
 
@@ -177,14 +201,22 @@
           <span *ngIf="bronzeMatch.teamACode" class="fi" [ngClass]="'fi-' + bronzeMatch.teamACode.toLowerCase()"></span>
           {{ bronzeMatch.teamA }}
         </div>
-        <span class="score">-</span>
-      </div>
+                <span class="score">
+                  <span *ngIf="bronzeMatch.home_score_penalties != null" class="penalties">({{ bronzeMatch.home_score_penalties }}) </span>
+                  <ng-container *ngIf="bronzeMatch.home_score != null; else emptyScore7">{{ bronzeMatch.home_score }}</ng-container>
+                  <ng-template #emptyScore7>-</ng-template>
+                </span>
+              </div>
       <div class="team-row">
         <div class="team-name tbd">
           <span *ngIf="bronzeMatch.teamBCode" class="fi" [ngClass]="'fi-' + bronzeMatch.teamBCode.toLowerCase()"></span>
           {{ bronzeMatch.teamB }}
         </div>
-        <span class="score">-</span>
+                <span class="score">
+                  <span *ngIf="bronzeMatch.away_score_penalties != null" class="penalties">({{ bronzeMatch.away_score_penalties }}) </span>
+                  <ng-container *ngIf="bronzeMatch.away_score != null; else emptyScore8">{{ bronzeMatch.away_score }}</ng-container>
+                  <ng-template #emptyScore8>-</ng-template>
+                </span>
       </div>
     </div>
   </div>

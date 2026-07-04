@@ -25,10 +25,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "node_modules/flag-icons/css/flag-icons.min.css",
-              "src/styles.css"
-            ]
+            "styles": ["node_modules/flag-icons/css/flag-icons.min.css", "src/styles.css"]
           },
           "configurations": {
             "production": {
@@ -50,7 +47,13 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
-              "outputHashing": "media"
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"

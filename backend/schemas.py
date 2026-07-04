@@ -24,8 +24,8 @@ class MatchResult(BaseModel):
     away_score: int
 
 class MatchBase(BaseModel):
-    home_team_id: int
-    away_team_id: int
+    home_team_id: Optional[int] = None
+    away_team_id: Optional[int] = None
     group_name: Optional[str] = None
 
 class Match(MatchBase):
@@ -33,11 +33,17 @@ class Match(MatchBase):
     tournament_id: int
     home_score: Optional[int] = None
     away_score: Optional[int] = None
+    home_score_penalties: Optional[int] = None
+    away_score_penalties: Optional[int] = None
     status: str
     date: Optional[str] = None
     venue: Optional[str] = None
     home_team_name: Optional[str] = None
     away_team_name: Optional[str] = None
+    is_knockout: bool = False
+    next_match_id: Optional[int] = None
+    is_next_match_home: bool = True
+    stage_name: Optional[str] = None
 
     class Config:
         from_attributes = True

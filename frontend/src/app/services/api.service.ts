@@ -1,5 +1,6 @@
 import { Injectable, isDevMode } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GroupStanding } from '../models/group-standing';
@@ -21,7 +22,7 @@ const FIFA_TO_ISO: Record<string, string> = {
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = isDevMode() ? 'http://127.0.0.1:8000' : 'https://world-cup-api-0ben.onrender.com';
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

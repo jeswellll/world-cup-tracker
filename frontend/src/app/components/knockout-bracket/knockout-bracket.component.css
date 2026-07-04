@@ -195,6 +195,15 @@
   color: #94a3b8;
   font-weight: 700;
   font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.penalties {
+  font-size: 0.75rem;
+  color: var(--fwc-neon-magenta);
+  font-weight: 500;
 }
 
 .match-header {
