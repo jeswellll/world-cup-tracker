@@ -102,6 +102,11 @@ def sync_matches_from_api(db: Session):
                 db_match.venue = venue_name
                 updated = True
                 
+            api_date = m.get("utcDate")
+            if api_date and db_match.date != api_date:
+                db_match.date = api_date
+                updated = True
+                
             # Bracket Progression
             if db_match.is_knockout and db_match.status == "Finished" and db_match.next_match_id:
                 # Determine Winner

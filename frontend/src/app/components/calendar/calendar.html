@@ -23,7 +23,11 @@
             <span *ngIf="match.home_team_code" class="fi" [ngClass]="'fi-' + match.home_team_code.toLowerCase()" style="margin-left: 8px;"></span>
           </div>
           <div class="score-box" [class.live-score]="match.status === 'In Progress'">
-            <span *ngIf="match.status === 'Finished' || match.status === 'In Progress'">{{ match.home_score }} - {{ match.away_score }}</span>
+            <div *ngIf="match.status === 'Finished' || match.status === 'In Progress'" style="display: flex; align-items: center; justify-content: center;">
+              <span class="penalties" *ngIf="match.home_score_penalties !== null" style="color: #ff3366; font-size: 0.8rem; margin-right: 4px;">({{ match.home_score_penalties }})</span>
+              <span>{{ match.home_score }} - {{ match.away_score }}</span>
+              <span class="penalties" *ngIf="match.away_score_penalties !== null" style="color: #ff3366; font-size: 0.8rem; margin-left: 4px;">({{ match.away_score_penalties }})</span>
+            </div>
             <span *ngIf="match.status !== 'Finished' && match.status !== 'In Progress'">vs</span>
           </div>
           <div class="away-team" [class.tbd]="match.away_team_name.includes('Group')">
