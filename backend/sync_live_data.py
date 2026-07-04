@@ -58,13 +58,24 @@ def sync_matches_from_api(db: Session):
         
         if db_match:
             score_data = m.get("score", {})
+            duration = score_data.get("duration")
             ft = score_data.get("fullTime", {})
-            api_h_score = ft.get("home")
-            api_a_score = ft.get("away")
+            rt = score_data.get("regularTime", {})
+            et = score_data.get("extraTime", {})
             
-            penalties = score_data.get("penalties", {})
-            api_h_pen = penalties.get("home")
-            api_a_pen = penalties.get("away")
+            if duration == "PENALTY_SHOOTOUT":
+                # Football-Data API has a bug where `fullTime` includes penalty goals, and `penalties` might be wrong/number taken.
+                # The true score is regular + extra time
+                api_h_score = (rt.get("home") or 0) + (et.get("home") or 0)
+                api_a_score = (rt.get("away") or 0) + (et.get("away") or 0)
+                # Actual penalties scored = fullTime - true score
+                api_h_pen = (ft.get("home") or 0) - api_h_score
+                api_a_pen = (ft.get("away") or 0) - api_a_score
+            else:
+                api_h_score = ft.get("home")
+                api_a_score = ft.get("away")
+                api_h_pen = None
+                api_a_pen = None
             
             venue_name = m.get("venue")
             
