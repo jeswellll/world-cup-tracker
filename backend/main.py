@@ -185,7 +185,7 @@ def update_real_teams(db: Session = Depends(database.get_db)):
         {"name": "Germany", "code": "GER"}, {"name": "Cura\u00e7ao", "code": "CUW"}, {"name": "Ivory Coast", "code": "CIV"}, {"name": "Ecuador", "code": "ECU"},
         {"name": "Netherlands", "code": "NED"}, {"name": "Japan", "code": "JPN"}, {"name": "Sweden", "code": "SWE"}, {"name": "Tunisia", "code": "TUN"},
         {"name": "Belgium", "code": "BEL"}, {"name": "Egypt", "code": "EGY"}, {"name": "Iran", "code": "IRN"}, {"name": "New Zealand", "code": "NZL"},
-        {"name": "Spain", "code": "ESP"}, {"name": "Cape Verde Islands", "code": "CPV"}, {"name": "Saudi Arabia", "code": "KSA"}, {"name": "Uruguay", "code": "URY"},
+        {"name": "Spain", "code": "ESP"}, {"name": "Cape Verde Islands", "code": "CPV"}, {"name": "Saudi Arabia", "code": "KSA"}, {"name": "Uruguay", "code": "URU"},
         {"name": "France", "code": "FRA"}, {"name": "Senegal", "code": "SEN"}, {"name": "Iraq", "code": "IRQ"}, {"name": "Norway", "code": "NOR"},
         {"name": "Argentina", "code": "ARG"}, {"name": "Algeria", "code": "ALG"}, {"name": "Austria", "code": "AUT"}, {"name": "Jordan", "code": "JOR"},
         {"name": "Portugal", "code": "POR"}, {"name": "Congo DR", "code": "COD"}, {"name": "Uzbekistan", "code": "UZB"}, {"name": "Colombia", "code": "COL"},
