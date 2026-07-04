@@ -213,6 +213,45 @@ def get_third_place_assignments(db: Session = Depends(database.get_db)):
     assignments = sorting_engine.resolve_third_place_matchups(top_thirds_dicts)
     return assignments
 
+def progress_knockout_match(db: Session, db_match: models.Match):
+    if db_match.is_knockout and db_match.status == "Finished" and db_match.next_match_id:
+        # Determine Winner
+        winner_id = None
+        loser_id = None
+        
+        h_goals = db_match.home_score or 0
+        a_goals = db_match.away_score or 0
+        h_pens = db_match.home_score_penalties or 0
+        a_pens = db_match.away_score_penalties or 0
+        
+        if h_goals > a_goals:
+            winner_id, loser_id = db_match.home_team_id, db_match.away_team_id
+        elif a_goals > h_goals:
+            winner_id, loser_id = db_match.away_team_id, db_match.home_team_id
+        else:
+            if h_pens > a_pens:
+                winner_id, loser_id = db_match.home_team_id, db_match.away_team_id
+            elif a_pens > h_pens:
+                winner_id, loser_id = db_match.away_team_id, db_match.home_team_id
+                
+        if winner_id:
+            next_m = db.query(models.Match).filter(models.Match.id == db_match.next_match_id).first()
+            if next_m:
+                if db_match.is_next_match_home:
+                    next_m.home_team_id = winner_id
+                else:
+                    next_m.away_team_id = winner_id
+                    
+        # Third place edge case (if it's Semi Finals 101 or 102, loser goes to 103)
+        if db_match.id in [101, 102] and loser_id:
+            third_m = db.query(models.Match).filter(models.Match.id == 103).first()
+            if third_m:
+                if db_match.id == 101:
+                    third_m.home_team_id = loser_id
+                else:
+                    third_m.away_team_id = loser_id
+
+
 @app.post("/matches/{match_id}/result", response_model=schemas.Match)
 def update_match_result(match_id: int, result: schemas.MatchResult, db: Session = Depends(database.get_db)):
     match = db.query(models.Match).filter(models.Match.id == match_id).first()
@@ -221,7 +260,10 @@ def update_match_result(match_id: int, result: schemas.MatchResult, db: Session 
     
     match.home_score = result.home_score
     match.away_score = result.away_score
+    match.home_score_penalties = result.home_score_penalties
+    match.away_score_penalties = result.away_score_penalties
     match.status = "Finished"
+    progress_knockout_match(db, match)
     db.commit()
     db.refresh(match)
     return match
@@ -327,6 +369,7 @@ def simulate_end_match(db: Session = Depends(database.get_db)):
         return {"msg": "There are no matches currently in progress."}
         
     match.status = 'Finished'
+    progress_knockout_match(db, match)
     db.commit()
     return {"msg": f"Match Finished! {match.home_team.name} {match.home_score} - {match.away_score} {match.away_team.name}"}
 

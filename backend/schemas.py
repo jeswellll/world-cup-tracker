@@ -22,6 +22,8 @@ class Tournament(TournamentBase):
 class MatchResult(BaseModel):
     home_score: int
     away_score: int
+    home_score_penalties: Optional[int] = None
+    away_score_penalties: Optional[int] = None
 
 class MatchBase(BaseModel):
     home_team_id: Optional[int] = None
