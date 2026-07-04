@@ -26,13 +26,15 @@ export class Calendar {
       return g ? g.find(t => t.team === team)?.code || null : null;
     };
 
-    // Collect group matches
-    const allMatches: any[] = [...this.state.matches().map(m => ({
-      ...m,
-      type: 'group',
-      home_team_code: getCode(m.home_team_name, m.group_name),
-      away_team_code: getCode(m.away_team_name, m.group_name)
-    }))];
+    // Collect group matches (IDs 1 to 72 are group stage matches)
+    const allMatches: any[] = [...this.state.matches()
+      .filter(m => m.id <= 72)
+      .map(m => ({
+        ...m,
+        type: 'group',
+        home_team_code: getCode(m.home_team_name, m.group_name),
+        away_team_code: getCode(m.away_team_name, m.group_name)
+      }))];
 
     // Collect knockout matches
     this.state.allKnockoutMatches().forEach(m => {
