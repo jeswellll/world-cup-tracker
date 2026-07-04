@@ -44,23 +44,32 @@ def sync_matches_from_api(db: Session):
         if not home_team or not away_team:
             continue
             
-        # Find the match in the local DB
+        from sqlalchemy import or_
+        # Find the match in the local DB regardless of home/away orientation
         db_match = db.query(models.Match).filter(
-            models.Match.home_team_id == home_team.id,
-            models.Match.away_team_id == away_team.id
+            or_(
+                (models.Match.home_team_id == home_team.id) & (models.Match.away_team_id == away_team.id),
+                (models.Match.home_team_id == away_team.id) & (models.Match.away_team_id == home_team.id)
+            )
         ).first()
         
         if db_match:
             score_data = m.get("score", {}).get("fullTime", {})
-            h_score = score_data.get("home")
-            a_score = score_data.get("away")
+            api_h_score = score_data.get("home")
+            api_a_score = score_data.get("away")
             venue_name = m.get("venue")
             
             updated = False
             # Update score if available
-            if h_score is not None and a_score is not None:
-                db_match.home_score = h_score
-                db_match.away_score = a_score
+            if api_h_score is not None and api_a_score is not None:
+                if db_match.home_team_id == home_team.id:
+                    db_match.home_score = api_h_score
+                    db_match.away_score = api_a_score
+                else:
+                    # The API flipped the teams, so flip the scores for our database
+                    db_match.home_score = api_a_score
+                    db_match.away_score = api_h_score
+                    
                 db_match.status = "Finished" if status in ["FINISHED", "AWARDED"] else "In Progress"
                 updated = True
                 
