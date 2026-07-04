@@ -143,7 +143,7 @@ def seed_database(db: Session = Depends(database.get_db)):
 
 
 def _get_standings_data(db: Session):
-    matches = db.query(models.Match).all()
+    matches = db.query(models.Match).filter(models.Match.is_knockout == False).all()
     tournament_teams = db.query(models.TournamentTeam).all()
     
     teams_dict = {}

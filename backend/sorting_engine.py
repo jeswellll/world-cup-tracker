@@ -69,13 +69,37 @@ def calculate_standings(matches: List[Dict[str, Any]], teams: List[Dict[str, Any
 
     df_stats = df_stats.reset_index()
 
-    # Sort by Points -> GD -> GF
-    df_stats = df_stats.sort_values(
-        by=['points', 'goal_difference', 'goals_for'], 
-        ascending=[False, False, False]
-    )
-    
+    from functools import cmp_to_key
+
     standings = df_stats.to_dict('records')
+
+    def compare_teams(t1, t2):
+        if t1['points'] != t2['points']:
+            return t1['points'] - t2['points']
+        
+        # Tie breaker 1: Head-to-Head
+        match = df_matches[
+            ((df_matches['home_team_id'] == t1['team_id']) & (df_matches['away_team_id'] == t2['team_id'])) |
+            ((df_matches['home_team_id'] == t2['team_id']) & (df_matches['away_team_id'] == t1['team_id']))
+        ]
+        if not match.empty:
+            m = match.iloc[0]
+            if m['status'] in ['Finished', 'In Progress']:
+                if m['home_team_id'] == t1['team_id']:
+                    if m['home_score'] > m['away_score']: return 1
+                    if m['home_score'] < m['away_score']: return -1
+                else:
+                    if m['away_score'] > m['home_score']: return 1
+                    if m['away_score'] < m['home_score']: return -1
+        
+        # Tie breaker 2: Goal Difference
+        if t1['goal_difference'] != t2['goal_difference']:
+            return t1['goal_difference'] - t2['goal_difference']
+            
+        # Tie breaker 3: Goals For
+        return t1['goals_for'] - t2['goals_for']
+
+    standings = sorted(standings, key=cmp_to_key(compare_teams), reverse=True)
 
     # Mathematical Qualification Engine
     # Group the standings and matches by group
